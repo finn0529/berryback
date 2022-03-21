@@ -69,3 +69,35 @@ export const getAllOrders = async (req, res) => {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
+
+export const getOrdersById = async (req, res) => {
+  try {
+    const result = await orders.findById(req.params.id).populate('user', 'account').populate('products.product')
+    if (result) {
+      res.status(200).send({ success: true, message: '', result })
+    } else {
+      res.status(404).send({ success: false, message: '找不到' })
+    }
+  } catch (error) {
+    if (error.name === 'CastError') {
+      res.status(404).send({ success: false, message: '找不到' })
+    } else {
+      res.status(500).send({ success: false, message: '伺服器錯誤' })
+    }
+  }
+}
+
+export const updateOrdersById = async (req, res) => {
+  try {
+    const result = await orders.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    res.status(200).send({ success: true, message: '', result })
+    console.log(result)
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'CastError') {
+      res.status(404).send({ success: false, message: '找不到' })
+    } else {
+      res.status(500).send({ success: false, message: '伺服器錯誤' })
+    }
+  }
+}
