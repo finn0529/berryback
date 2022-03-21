@@ -10,8 +10,8 @@ cloudinary.config({
 
 const upload = multer({
   storage: new CloudinaryStorage({ cloudinary }),
-  fileFilter (req, files, cb) {
-    if (!files.mimetype.includes('image')) {
+  fileFilter (req, file, cb) {
+    if (!file.mimetype.includes('image')) {
       cb(new multer.MulterError('LIMIT_FORMAT'), false)
     } else {
       cb(null, true)
@@ -22,26 +22,8 @@ const upload = multer({
   }
 })
 
-// export default async (req, res, next) => {
-//   upload.single('image')(req, res, async error => {
-//     if (error instanceof multer.MulterError) {
-//       let message = '上傳錯誤'
-//       if (error.code === 'LIMIT_FILE_SIZE') {
-//         message = '檔案太大'
-//       } else if (error.code === 'LIMIT_FORMAT') {
-//         message = '上傳錯誤'
-//       }
-//       res.status(400).send({ success: false, message })
-//     } else if (error) {
-//       res.status(500).send({ success: false, message: '伺服器錯誤' })
-//     } else {
-//       next()
-//     }
-//   })
-// }
-
 export default async (req, res, next) => {
-  upload.array('image', 10)(req, res, async error => {
+  upload.single('image')(req, res, async error => {
     if (error instanceof multer.MulterError) {
       let message = '上傳錯誤'
       if (error.code === 'LIMIT_FILE_SIZE') {
@@ -57,3 +39,21 @@ export default async (req, res, next) => {
     }
   })
 }
+
+// export default async (req, res, next) => {
+//   upload.array('image', 10)(req, res, async error => {
+//     if (error instanceof multer.MulterError) {
+//       let message = '上傳錯誤'
+//       if (error.code === 'LIMIT_FILE_SIZE') {
+//         message = '檔案太大'
+//       } else if (error.code === 'LIMIT_FORMAT') {
+//         message = '上傳錯誤'
+//       }
+//       res.status(400).send({ success: false, message })
+//     } else if (error) {
+//       res.status(500).send({ success: false, message: '伺服器錯誤' })
+//     } else {
+//       next()
+//     }
+//   })
+// }
